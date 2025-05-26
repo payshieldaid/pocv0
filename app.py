@@ -15,6 +15,8 @@ from reportlab.lib.units import inch
 from reportlab.lib.enums import TA_LEFT
 import pandas as pd
 
+st.set_page_config(page_title="PayShield - AI Audit", page_icon="🛡️", layout="centered")
+
 # Add this at the top of your app
 PASSWORD = st.secrets.get("APP_PASSWORD", "")
 
@@ -30,7 +32,6 @@ if not st.session_state["authenticated"]:
 
 
 # === PayShield Branding ===
-st.set_page_config(page_title="PayShield - AI Audit", page_icon="🛡️", layout="centered")
 st.markdown("""
     <h1 style='text-align: center; color:#2c3e50;'>🛡️ PayShield</h1>
     <h4 style='text-align: center; color: #7f8c8d;'>Smart Payment Audits & Anomaly Detection for AP Teams</h4>
