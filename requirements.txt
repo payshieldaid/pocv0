@@ -1,0 +1,7 @@
+streamlit>=1.32
+openai>=1.0.0
+azure-storage-blob
+PyMuPDF
+pillow
+pandas
+reportlab
