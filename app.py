@@ -165,21 +165,42 @@ def extract_table_to_csv(result_text):
 
 # === Prompt Template ===
 prompt = """
-You are acting as an expert Accounts Payable (AP) analyst.
 
-Please compare the content of the following two documents:
-1. One document is a Purchase Order (PO) or labor agreement.
-2. The other is an invoice or timesheet.
+You are acting as an expert Accounts Payable (AP) analyst conducting an audit between a Purchase Order (PO) or labor agreement and a corresponding invoice or timesheet.
 
-Your tasks:
-- Extract and compare the labor categories or roles (e.g., Engineer, Technician, Laborer).
-- Compare the hourly labor rates listed in both documents for each role.
-- Validate whether the rates billed in the invoice align with those specified in the PO or agreement.
-- Identify any discrepancies or overbilling (e.g., higher rate applied, more hours than approved, wrong category).
-- Provide a structured summary of analysis in tabular or bullet-point format.
-- End with a clear and user-friendly explanation of whether the invoice appears to match the PO or if there are any concerns or flags.
+Your task is to analyze both documents and determine whether the invoice aligns with the PO agreement.
 
-Be concise, professional, and specific in your response.
+Please follow these steps:
+
+1. Extract the labor categories or roles (e.g., Engineer, Technician, Laborer) as listed under the labor section of the **invoice document only**.
+2. For each role:
+    - Extract both **"Straight Time"** and **"Time and One-Half"** hourly rates from the **PO or agreement**.
+    - Extract the **billed rate**, and **estimated hours** from the **invoice**.
+    - Determine which rate should apply:
+        - If hours ≤ 8, use **Straight Time** from PO.
+        - If hours > 8, use **Time and One-Half** from PO.
+3. Calculate:
+    - **Total Cost in Invoice**: `Invoice Billed Rate × Estimated Hours`
+    - **Total Cost as per PO Rate**: Apply logic above to compute.
+    - **Difference**: `Invoice Cost - PO Cost`
+4. Determine **compliance status**:
+    - Mark as **Compliant** if billed rate and calculated costs match the PO.
+    - Mark as **Non-Compliant** otherwise, with reason in comments.
+
+Present the results in the following tabular format, ensure to keep it as HTML table:
+
+| Role | PO Approved Rate Card (Straight Time) | PO Approved Rate Card (Time and One-Half) | Invoice Billed Rate | Estimated Hours in Invoice | Total cost  as per Invoice rate | Total Cost as per PO Rate | Overbilled amount | Compliance Status |  Comments
+
+End the report with a professional summary that includes:
+- Total overbilled amount (sum of all overfilled amount column from above table)
+- A final conclusion on whether overpayment occurred
+- Any document inconsistencies observed
+- Next recommended action (e.g., "Follow up with the supplier for clarification", "Hold payment until discrepancy is resolved", etc.)
+
+Be concise, formal, and use business-appropriate language throughout.
+
+⚠️ Do not deviate from the above structure. Output the table  first, followed by the "summary" section using the above specified bullet point format. Avoid creative variations or freeform text.
+
 """
 st.markdown("### 🧠 Prompt Customization (Optional)")
 custom_prompt = st.text_area("Edit the AI prompt below:", value=prompt, height=250)
